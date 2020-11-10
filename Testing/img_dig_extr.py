@@ -3,36 +3,89 @@ import numpy as np
 from  matplotlib import pyplot as plt
 from PIL import Image
 
-#imgPIL = Image.open(r"Testing\digs.png") 
+#TODO upgrade check_internal to be more error-proof
 
-#img = plt.imread(r"Testing\digs1.png")
+def check_internal(x,y,w,h, it):
+    """
+    This function checks wheter passed recrangle is internal to any other 
+    (except first which is the whole img)
+    """
+    for i in range(1, len(contours)):
+        _cnt = contours[i]
+        _x,_y,_w,_h = cv2.boundingRect(_cnt)
+        if x >= _x and x <= _x + _w and y >= _y and y <= _y+_h and it != i:
+            return True
+    return False
+
+def get_contours(img):
+    """
+    Processing pased image, tresholding, and finding contours.
+    Returns contours and tresholded img.
+    """
+    print("Image shape and type: ", img.shape, img.dtype)
+    imgray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+    _ , thresh = cv2.threshold(imgray, 127,255,0)
+
+    contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    #print(hierarchy)
+    return contours, thresh
+
+#Currently not using this one
+def mask_image(img):
+    """
+    Returns masked image
+    """
+    b,g,r = cv2.split(img)
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+    lower_tresh = np.array([0,0,0])
+    upper_tresh = np.array([180,255,30])
+
+    mask = cv2.inRange(hsv, lower_tresh, upper_tresh)
+    res = cv2.bitwise_and(img, img, mask=mask)
+    return res
+
+def extract_nums_from_img(contours, img, threshloded):
+    """
+    Extracts numbers from passed image.
+    Returns list of cropped images with digits.
+    """
+
+    extracted_nums = []
+    rec_params = []
+
+    for i in range(1, len(contours)):
+        """
+        Finding contours and extracting single numbers
+        """
+
+        cnt = contours[i]
+        x,y,w,h = cv2.boundingRect(cnt)
+
+        inc = 10 #var that increases rect boundaries
+
+        if check_internal(x,y,w,h,i) == False:
+            rec_params.append([x,y,w,h])
+
+    rec_params = sorted(rec_params)    
+
+
+    for x,y,w,h in rec_params:
+        img = cv2.rectangle(img,(x-inc,y-inc),(x+w+inc,y+h+inc),(0,0,255),1)
+        num = thresholded[y-inc:y+h+inc, x-inc:x+w+inc]
+        extracted_nums.append(num)
+
+    return extracted_nums
+
+
+
 img = cv2.imread(r"Testing\nums.png")
-#print(img)
 
-print(img.shape)
-print(img.dtype)
+contours, thresholded= get_contours(img)
 
-#b,g,r = cv2.split(img)
+extracted = extract_nums_from_img(contours, img, thresholded)
 
-#hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-
-lower_tresh = np.array([0,0,0])
-upper_tresh = np.array([180,255,30])
-
-#mask = cv2.inRange(hsv, lower_tresh, upper_tresh)
-#res = cv2.bitwise_and(img, img, mask=mask)
-imgray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-
-ret, thresh = cv2.threshold(imgray, 127,255,0)
-
-contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-print(hierarchy)
-
-#img = cv2.drawContours(img, contours, 2, (0,255,0), 3)
-for i in range(1, len(contours)):
-    cnt = contours[i]
-    x,y,w,h = cv2.boundingRect(cnt)
-    img = cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
+print("Number of digits found: ", len(extracted))
 
 while(1):
 
@@ -42,4 +95,12 @@ while(1):
     k = cv2.waitKey(5)
     if k == 13:
         break
-    cv2.imshow('Img', img)
+    
+    cv2.imshow('With boundaries: ', img)
+
+cv2.destroyAllWindows()
+
+
+for i, dig in enumerate(extracted):
+    name = r"Testing\extr_" + str(i) + ".png"
+    cv2.imwrite(name,dig)
