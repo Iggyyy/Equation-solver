@@ -125,4 +125,8 @@ for j in range(iterations):
 
         stat.add_acc(test_correct_cnt/len(test_images))
 
+from Testing import load_save_json
+
+load_save_json.save_to_json(kernels, weights_1_2, kernel_rows, kernel_cols)
+
 stat.stat_show()

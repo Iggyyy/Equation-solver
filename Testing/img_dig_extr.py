@@ -62,7 +62,7 @@ def extract_nums_from_img(contours, img, threshloded):
         cnt = contours[i]
         x,y,w,h = cv2.boundingRect(cnt)
 
-        inc = 10 #var that increases rect boundaries
+        inc = 5 #var that increases rect boundaries
 
         if check_internal(x,y,w,h,i) == False:
             rec_params.append([x,y,w,h])
@@ -85,12 +85,9 @@ contours, thresholded= get_contours(img)
 
 extracted = extract_nums_from_img(contours, img, thresholded)
 
-print("Number of digits found: ", len(extracted))
+print("Number of digits found in image: ", len(extracted))
 
 while(1):
-
-    
-
 
     k = cv2.waitKey(5)
     if k == 13:
@@ -101,6 +98,52 @@ while(1):
 cv2.destroyAllWindows()
 
 
-for i, dig in enumerate(extracted):
+#SAVING
+for x in extracted:
+    print(x.shape)
+
+
+def reshape_to_square(image, desired_size):
+    """
+    Drawing additional cols and rows, so then reshaping will be less lossy.
+    """
+    while( image.shape[0] != image.shape[1]):
+        height = image.shape[0]
+        width = image.shape[1]
+
+        if height > width:
+            if width % 2 == 0:
+                image = np.c_[image, np.full(height, 255)]
+            else:
+                image = np.c_[np.full(height, 255), image]
+
+        else:
+            if height % 2 == 0:
+                image = np.r_[image, [np.full(width,255)]]
+            else:
+                image = np.r_[[np.full(width,255)], image]
+    
+    
+    
+    
+    
+
+    return image
+
+for i in range(len(extracted)):
+    extracted[i]  = reshape_to_square(extracted[i], 28)
+
     name = r"Testing\extr_" + str(i) + ".png"
-    cv2.imwrite(name,dig)
+    cv2.imwrite(name,extracted[i])
+
+    im = cv2.imread(name)
+    res = cv2.resize(im, dsize=(28,28), interpolation=cv2.INTER_CUBIC)
+
+    res = (255-res)
+
+    cv2.imwrite(name,res)
+
+    
+print("Succesfully saved images")
+
+    
