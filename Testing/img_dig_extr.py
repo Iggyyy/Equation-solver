@@ -24,9 +24,10 @@ def get_contours(img):
     """
     print("Image shape and type: ", img.shape, img.dtype)
     imgray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-    _ , thresh = cv2.threshold(imgray, 127,255,0)
-
+    _ , thresh = cv2.threshold(imgray, 112,255,0)
+    
     contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
     #print(hierarchy)
     return contours, thresh
 
@@ -79,7 +80,7 @@ def extract_nums_from_img(contours, img, threshloded):
 
 
 
-img = cv2.imread(r"Testing\nums.png")
+img = cv2.imread(r"Testing\nums4.png")
 
 contours, thresholded= get_contours(img)
 
@@ -132,7 +133,7 @@ def reshape_to_square(image, desired_size):
 
 for i in range(len(extracted)):
     extracted[i]  = reshape_to_square(extracted[i], 28)
-
+    print(extracted[i][14])
     name = r"Testing\extr_" + str(i) + ".png"
     cv2.imwrite(name,extracted[i])
 

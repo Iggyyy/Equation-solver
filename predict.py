@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 from  Testing import load_save_json
-
+from matplotlib import pyplot as plt
 
 
 
@@ -45,17 +45,33 @@ def pred(images):
 
           
 images = []
-for i in range(4):
+imgs = []
+for i in range(5):
     im = cv2.imread(r"Testing\extr_" + str(i) + ".png")
     im = cv2.cvtColor(im,cv2.COLOR_BGR2GRAY)
-    im = im.reshape(28*28)/255
+    imgs.append(im)
+    im = im.reshape(28*28) / 255
     images.append(im)
 
 images = np.array(images)
-
-kernels, weights_1_2, kernel_rows, kernel_cols = load_save_json.get_from_json(r"Models\model_2020-11-11.txt")
+kernels, weights_1_2, kernel_rows, kernel_cols = load_save_json.get_from_json(r"Models\model_2020-11-18.txt")
 
 
 p = pred(images)
 for x in p:
     print(int(np.argmax(x)))
+
+
+"""
+plt.imshow(imgs[0])
+plt.show()
+
+while(1):
+
+    k = cv2.waitKey(5)
+    if k == 13:
+        break
+    
+    cv2.imshow("Predicted vs image: " + str(np.argmax(p[i])), cv2.resize(imgs[i], dsize=(184,184), interpolation=cv2.INTER_CUBIC))
+"""
+
