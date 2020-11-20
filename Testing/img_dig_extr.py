@@ -80,7 +80,7 @@ def extract_nums_from_img(contours, img, threshloded):
 
 
 
-img = cv2.imread(r"Testing\nums4.png")
+img = cv2.imread(r"Testing\nums.png")
 
 contours, thresholded= get_contours(img)
 

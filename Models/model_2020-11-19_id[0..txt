@@ -1,0 +1,1 @@
+{"model_num": "model2020-11-19", "weights_0_1": 3, "weights_1_2": 3, "kernel_properties": {"kernel_rows": 3, "kernel_cols": 3}}

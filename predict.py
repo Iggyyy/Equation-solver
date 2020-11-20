@@ -54,7 +54,7 @@ for i in range(5):
     images.append(im)
 
 images = np.array(images)
-kernels, weights_1_2, kernel_rows, kernel_cols = load_save_json.get_from_json(r"Models\model_2020-11-18.txt")
+kernels, weights_1_2, kernel_rows, kernel_cols = load_save_json.get_from_json(r"Models\model_2020-11-19_id9226.txt")
 
 
 p = pred(images)

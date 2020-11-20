@@ -5,7 +5,7 @@ from keras.datasets import mnist
 
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
 
-images, labels = ( x_train[0:4000].reshape(4000, 28*28) /255, y_train[0:4000]  )
+images, labels = ( x_train[0:10000].reshape(10000, 28*28) /255, y_train[0:10000]  )
 
 
 
@@ -17,7 +17,7 @@ for i, k in enumerate(labels):
 labels = pom
 
 
-test_images=  x_test[0:1000].reshape(1000, 28*28) /255
+test_images=  x_test[0:5000].reshape(5000, 28*28) /255
 test_labels = np.zeros((len(y_test), 10))
 for i, k in enumerate(y_test):
     test_labels[i][k] = 1

@@ -18,7 +18,7 @@ def softmax(x):
     temp = np.exp(x)
     return temp / np.sum(temp, axis=1, keepdims=True)
 
-alpha, iterations = (2, 120)
+alpha, iterations = (0.2, 200)
 pixels_per_image, num_labels = (784, 10)
 batch_size = 128
 

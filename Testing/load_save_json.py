@@ -1,6 +1,7 @@
 import json
 from datetime import date
 import numpy as np
+import time
 
 
 
@@ -22,8 +23,8 @@ def save_to_json(weights_0_1, weights_1_2, kernel_rows, kernel_cols ):
     }
 
    
-
-    name_str = r'Models\model_' + str(date.today()) + '.txt'
+    _id = str(time.time())
+    name_str = r'Models\model_' + str(date.today()) + '_id' + _id[len(_id)-4: len(_id)] + '.txt'
 
     with open(name_str, 'w') as outfile:
         json.dump(data, outfile)
@@ -48,5 +49,5 @@ def get_from_json(model_path):
     
         return w_01, w_02, k_rows, k_cols
 
-
+#save_to_json(np.array(3),np.array(3), 3, 3 )
 
